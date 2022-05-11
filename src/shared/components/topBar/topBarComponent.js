@@ -1,6 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 
-const TopBar = () => {
+const TopBarComponent = () => {
   return (
     <nav className="navbar navbar-light">
       <div className="container">
@@ -22,4 +22,4 @@ const TopBar = () => {
     </nav>
   );
 };
-export default TopBar;
+export default TopBarComponent;

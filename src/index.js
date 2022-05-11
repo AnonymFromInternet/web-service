@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 
 import Routes from "./routes/routes";
-import TopBar from "./shared/components/topBar/topBar";
+import TopBarComponent from "./shared/components/topBar/topBarComponent";
 
 import "./globalCss/global.css";
 
@@ -11,7 +11,7 @@ const App = () => {
   return (
     <>
       <Router>
-        <TopBar />
+        <TopBarComponent />
         <Routes></Routes>
       </Router>
     </>
@@ -19,8 +19,4 @@ const App = () => {
 };
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+root.render(<App />);
