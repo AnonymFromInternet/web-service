@@ -2,6 +2,7 @@ import { Link, Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import useFetch from "../../shared/hooks/useFetch";
+import useLocalStorage from "../../shared/hooks/useLocalStorage";
 
 const AuthenticationPage = () => {
   const [email, setEmail] = useState("");
@@ -23,6 +24,7 @@ const AuthenticationPage = () => {
     : { userName, email, password };
 
   const [{ isLoading, response, errors }, fetchData] = useFetch(apiUrl);
+  const [token, setToken] = useLocalStorage("accessToken");
 
   const login = (e) => {
     e.preventDefault();
@@ -36,7 +38,7 @@ const AuthenticationPage = () => {
     if (!response) {
       return;
     }
-    localStorage.setItem("accessToken", response.data.user.token);
+    setToken(response.data.user.token);
     setIsSuccessfulSubmit(true);
   }, [response]);
 
