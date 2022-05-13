@@ -5,12 +5,11 @@ const useLocalStorage = (key, initialValue = "") => {
     return localStorage.getItem(key) || initialValue;
   });
   useEffect(() => {
-    if (!value && value === initialValue) {
+    if (!value && value === "") {
       return;
     }
-    console.log("from useLocalStorage");
     localStorage.setItem(key, value);
-  }, [value]);
+  }, [value, key]);
   return [value, setValue];
 };
 export default useLocalStorage;

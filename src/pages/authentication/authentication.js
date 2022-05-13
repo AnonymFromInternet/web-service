@@ -1,8 +1,10 @@
 import { Link, Navigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import useFetch from "../../shared/hooks/useFetch";
 import useLocalStorage from "../../shared/hooks/useLocalStorage";
+import { CurrentUserContext } from "../../shared/contexts/currentUserContext";
+import BackendErrorMessagesComponent from "./BackendErrorMessages.component";
 
 const AuthenticationPage = () => {
   const [email, setEmail] = useState("");
@@ -24,7 +26,9 @@ const AuthenticationPage = () => {
     : { userName, email, password };
 
   const [{ isLoading, response, errors }, fetchData] = useFetch(apiUrl);
-  const [token, setToken] = useLocalStorage("accessToken");
+  const [, setToken] = useLocalStorage("accessToken");
+
+  const [, setCurrentUserState] = useContext(CurrentUserContext);
 
   const login = (e) => {
     e.preventDefault();
@@ -40,7 +44,15 @@ const AuthenticationPage = () => {
     }
     setToken(response.data.user.token);
     setIsSuccessfulSubmit(true);
-  }, [response]);
+    setCurrentUserState((prevState) => {
+      return {
+        ...prevState,
+        isLoading: false,
+        isLoggedIn: true,
+        currentUser: response.data.user,
+      };
+    });
+  }, [response, setToken, setCurrentUserState]);
 
   if (isSuccessfulSubmit) {
     return <Navigate to={"/"} />;
@@ -56,6 +68,9 @@ const AuthenticationPage = () => {
               <Link to={descriptionLink}>{descriptionLinkText}</Link>
             </p>
             <form onSubmit={login}>
+              {errors && (
+                <BackendErrorMessagesComponent backendErrors={errors} />
+              )}
               <fieldset>
                 {!isLoginPage && (
                   <fieldset className={"form-group"}>

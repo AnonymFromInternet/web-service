@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import useLocalStorage from "./useLocalStorage";
 
 const useFetch = (url) => {
   const baseUrl = "https://conduit.productionready.io/api";
@@ -7,9 +8,9 @@ const useFetch = (url) => {
   const [response, setResponse] = useState(null);
   const [errors, setErrors] = useState(null);
   const [options, setOptions] = useState({});
+  const [token] = useLocalStorage("accessToken");
 
   const fetchData = (options = {}) => {
-    console.log("options:", options);
     setOptions(options);
     setIsLoading(true);
   };
@@ -18,6 +19,29 @@ const useFetch = (url) => {
     if (!isLoading) {
       return;
     }
+
+    // GET Request
+    if (token) {
+      console.log("token is not nil");
+      const optionsWithHeader = {
+        ...options,
+        headers: {
+          authorization: token ? `Token ${token}` : "",
+        },
+      };
+      axios
+        .get(baseUrl + url, optionsWithHeader)
+        .then((response) => {
+          setResponse(response);
+        })
+        .catch((error) => {
+          console.log("Error from Get request in useFetch", error);
+        });
+      return;
+    }
+    // GET Request
+
+    // POST Request
     axios
       .post(baseUrl + url, options)
       .then((response) => {
@@ -26,9 +50,10 @@ const useFetch = (url) => {
       })
       .catch((error) => {
         setIsLoading(false);
-        setErrors(error.response.data);
+        setErrors(error.response.data.errors);
       });
-  }, [isLoading]);
+    // POST Request
+  }, [isLoading, options, url, token]);
 
   return [{ isLoading, response, errors }, fetchData];
 };
