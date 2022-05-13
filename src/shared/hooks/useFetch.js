@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import useLocalStorage from "./useLocalStorage";
 
@@ -10,10 +10,10 @@ const useFetch = (url) => {
   const [options, setOptions] = useState({});
   const [token] = useLocalStorage("accessToken");
 
-  const fetchData = (options = {}) => {
+  const fetchData = useCallback((options = {}) => {
     setOptions(options);
     setIsLoading(true);
-  };
+  }, []);
 
   useEffect(() => {
     if (!isLoading) {
@@ -22,7 +22,6 @@ const useFetch = (url) => {
 
     // GET Request
     if (token) {
-      console.log("token is not nil");
       const optionsWithHeader = {
         ...options,
         headers: {

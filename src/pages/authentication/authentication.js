@@ -28,7 +28,9 @@ const AuthenticationPage = () => {
   const [{ isLoading, response, errors }, fetchData] = useFetch(apiUrl);
   const [, setToken] = useLocalStorage("accessToken");
 
-  const [, setCurrentUserState] = useContext(CurrentUserContext);
+  const [currentUserState, setCurrentUserState] =
+    useContext(CurrentUserContext);
+  console.log(currentUserState);
 
   const login = (e) => {
     e.preventDefault();
@@ -45,6 +47,7 @@ const AuthenticationPage = () => {
     setToken(response.data.user.token);
     setIsSuccessfulSubmit(true);
     setCurrentUserState((prevState) => {
+      console.log("current user was set");
       return {
         ...prevState,
         isLoading: false,
