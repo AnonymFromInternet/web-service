@@ -1,11 +1,13 @@
-import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { Link, Navigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 import useFetch from "../../shared/hooks/useFetch";
 
 const AuthenticationPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userName, setUserName] = useState("");
+  const [isSuccessfulSubmit, setIsSuccessfulSubmit] = useState(false);
   let { pathname } = useLocation();
 
   const isLoginPage = pathname === "/login";
@@ -17,8 +19,8 @@ const AuthenticationPage = () => {
 
   const apiUrl = isLoginPage ? "/users/login" : "/users";
   const user = isLoginPage
-    ? { user: { email, password } }
-    : { user: { userName, email, password } };
+    ? { email, password }
+    : { userName, email, password };
 
   const [{ isLoading, response, errors }, fetchData] = useFetch(apiUrl);
 
@@ -26,9 +28,21 @@ const AuthenticationPage = () => {
     e.preventDefault();
     fetchData({
       method: "post",
-      data: { user },
+      user,
     });
   };
+
+  useEffect(() => {
+    if (!response) {
+      return;
+    }
+    localStorage.setItem("accessToken", response.data.user.token);
+    setIsSuccessfulSubmit(true);
+  }, [response]);
+
+  if (isSuccessfulSubmit) {
+    return <Navigate to={"/"} />;
+  }
 
   return (
     <div className="auth-page">

@@ -9,6 +9,7 @@ const useFetch = (url) => {
   const [options, setOptions] = useState({});
 
   const fetchData = (options = {}) => {
+    console.log("options:", options);
     setOptions(options);
     setIsLoading(true);
   };
@@ -17,15 +18,15 @@ const useFetch = (url) => {
     if (!isLoading) {
       return;
     }
-    axios(baseUrl + url, options)
+    axios
+      .post(baseUrl + url, options)
       .then((response) => {
-        setResponse(response.data);
+        setResponse(response);
         setIsLoading(false);
       })
       .catch((error) => {
         setIsLoading(false);
         setErrors(error.response.data);
-        console.log(error.response.data);
       });
   }, [isLoading]);
 
